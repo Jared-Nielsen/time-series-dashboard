@@ -5,128 +5,164 @@ Date: August 20, 2025
 Status: Draft
 Revision History:v1.0: Initial draft outlining core requirements.
 
-2. Overview2.1 PurposeThe Electricity Price Forecasting Dashboard is a web-based application designed to enable users to forecast electricity prices using historical data. It leverages two complementary forecasting methods: econometric (ARIMA) for traditional statistical modeling and machine learning (LSTM) for handling complex, non-linear patterns. The dashboard will visualize forecasts, allow users to backtest model accuracy against historical data, and provide insights to support decision-making in energy markets, trading, or policy analysis.2.2 ScopeIn Scope:Data ingestion from historical electricity price datasets (e.g., hourly or daily prices).
+2. Overview
+2.1 Purpose 
+The Electricity Price Forecasting Dashboard is a web-based application designed to enable users to forecast electricity prices using historical data. It leverages two complementary forecasting methods: econometric (ARIMA) for traditional statistical modeling and machine learning (LSTM) for handling complex, non-linear patterns. The dashboard will visualize forecasts, allow users to backtest model accuracy against historical data, and provide insights to support decision-making in energy markets, trading, or policy analysis.2.2 ScopeIn Scope:Data ingestion from historical electricity price datasets (e.g., hourly or daily prices).
 Implementation of ARIMA and LSTM models for forecasting.
 Interactive visualizations of forecasts, historical data, and backtest results.
 Backtesting functionality with accuracy metrics (e.g., MAE, RMSE).
 User-friendly dashboard interface for model configuration and result exploration.
 
-Out of Scope:Real-time data streaming or live forecasting (focus on historical batch processing).
+Out of Scope:
+Real-time data streaming or live forecasting (focus on historical batch processing).
 Integration with external APIs for data fetching (assume users upload data or use pre-loaded datasets).
 Advanced features like ensemble modeling or hyperparameter optimization beyond basic tuning.
 Mobile app version (web-responsive design only).
 
-2.3 ObjectivesProvide accurate, interpretable forecasts to help users anticipate electricity price fluctuations.
+2.3 Objectives
+Provide accurate, interpretable forecasts to help users anticipate electricity price fluctuations.
 Compare econometric and ML approaches to highlight strengths (e.g., ARIMA for stationary data, LSTM for seasonal/trendy data).
 Enable backtesting to validate model performance and build user trust.
 Deliver an intuitive UI that democratizes time series forecasting for non-experts.
 
-2.4 Key Metrics for SuccessUser Adoption: 80% of target users complete a forecast session within the first use.
+2.4 Key Metrics for Success
+User Adoption: 80% of target users complete a forecast session within the first use.
 Accuracy: Backtested models achieve <10% error on sample datasets (measured by RMSE).
 Performance: Dashboard loads forecasts in <5 seconds for datasets up to 10,000 records.
 Feedback: NPS score >7/10 from beta users.
 
-3. User PersonasPersona
-Description
-Goals
-Pain Points
+3. User Personas
+
 Energy Analyst (Primary)
 Mid-level professional in utilities or trading firms, familiar with data but not deep ML expertise.
 Generate quick forecasts for reports; compare models for reliability.
 Manual scripting in tools like Python/R; lack of visualization for presentations.
+
 Data Scientist (Secondary)
 Technical user with coding skills, seeking a prototyping tool.
 Experiment with ARIMA/LSTM params; export results for further analysis.
 Time-consuming setup for backtesting; integrating multiple models.
+
 Policy Maker (Tertiary)
 Non-technical user in government/energy agencies.
 View high-level forecasts and accuracy visuals for decision support.
 Overwhelmed by raw data; need simple interpretations.
 
-4. Functional Requirements4.1 Data HandlingData Upload/Input:Users can upload CSV/Excel files with historical electricity price data (columns: Timestamp, Price; optional: Features like demand, weather).
+4. Functional Requirements
+4.1 Data Handling
+Data Upload/Input:
+Users can upload CSV/Excel files with historical electricity price data (columns: Timestamp, Price; optional: Features like demand, weather).
 Support time series formats (e.g., datetime index, univariate/multivariate).
 Pre-loaded sample datasets (e.g., from public sources like EIA or European spot markets) for demo purposes.
 Validation: Check for missing values, ensure chronological order; auto-impute or flag issues.
 
-Data Preprocessing:Automatic detection of frequency (hourly, daily).
+Data Preprocessing:
+Automatic detection of frequency (hourly, daily).
 Features: Stationarity tests (ADF for ARIMA), normalization/scaling for LSTM.
 Split data: 80% train, 20% test for backtesting.
 
-4.2 Forecasting ModelsARIMA (Econometric Method):Auto-ARIMA for parameter selection (p, d, q) or manual input.
+4.2 Forecasting Models
+ARIMA (Econometric Method):
+Auto-ARIMA for parameter selection (p, d, q) or manual input.
 Forecast horizon: User-selectable (e.g., 1-30 days ahead).
 Handle seasonality with SARIMA if detected.
 
-LSTM (ML Method):Single-layer LSTM network (configurable units: 50-200).
+LSTM (ML Method):
+Single-layer LSTM network (configurable units: 50-200).
 Input: Sliding window (look-back period: 7-30 days, user-adjustable).
 Training: Epochs (10-100), batch size (32-128), optimizer (Adam), loss (MSE).
 Forecast horizon: Same as ARIMA.
 
-Model Execution:Run both models in parallel upon user request.
+Model Execution:
+Run both models in parallel upon user request.
 Output: Point forecasts with confidence intervals (95% for ARIMA, prediction intervals via dropout for LSTM).
 
-4.3 VisualizationDashboard Layout:Sidebar: Data upload, model config (e.g., sliders for params), forecast horizon.
+4.3 Visualization
+Dashboard Layout:
+Sidebar: Data upload, model config (e.g., sliders for params), forecast horizon.
 Main Panel: Tabs for Historical Data, Forecasts, Backtesting.
 
-Visual Components:Line Chart: Historical prices vs. Forecasts (overlay ARIMA and LSTM lines, with shaded confidence bands).
+Visual Components:
+Line Chart: Historical prices vs. Forecasts (overlay ARIMA and LSTM lines, with shaded confidence bands).
 Interactive: Zoom, hover for values, toggle models on/off.
 Comparison Chart: Side-by-side ARIMA vs. LSTM forecasts.
 Backtest Visuals: Actual vs. Predicted lines, residual plots.
 Library: Use Plotly or similar for interactivity.
 
-4.4 BacktestingProcess:Use walk-forward validation: Train on initial data, forecast next period, roll forward.
+4.4 Backtesting
+Process:Use walk-forward validation: Train on initial data, forecast next period, roll forward.
 Periods: User-selectable (e.g., 5-10 folds).
 
-Accuracy Metrics:Calculate and display: Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), Mean Absolute Percentage Error (MAPE).
+Accuracy Metrics:
+Calculate and display: Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), Mean Absolute Percentage Error (MAPE).
 Table: Metrics comparison between ARIMA and LSTM.
 Visual: Error distribution histogram.
 
-Export:Download forecasts, metrics, and visuals as CSV/PNG/PDF.
+Export:
+Download forecasts, metrics, and visuals as CSV/PNG/PDF.
 
-4.5 User InteractionsWorkflow:Upload/select data.
+4.5 User Interactions
+Workflow:
+Upload/select data.
 Configure models (default params for quick start).
 Run forecast/backtest.
 View results; iterate by adjusting params.
 
-Error Handling:Graceful failures (e.g., "Data too short for LSTM" with suggestions).
+Error Handling:
+Graceful failures (e.g., "Data too short for LSTM" with suggestions).
 
-Accessibility:Keyboard navigation, alt text for charts.
+Accessibility:
+Keyboard navigation, alt text for charts.
 
-5. Non-Functional RequirementsPerformance:Handle datasets up to 100,000 rows.
+5. Non-Functional Requirements
+Performance:Handle datasets up to 100,000 rows.
 Model training: <1 minute on standard hardware (assume cloud backend).
 
-Security:Data privacy: No storage of user uploads beyond session.
+Security:
+Data privacy: No storage of user uploads beyond session.
 Authentication: Optional login for saving sessions.
 
-Tech Stack:Backend: Python (Statsmodels for ARIMA, TensorFlow/Keras for LSTM).
+Tech Stack:
+Backend: Python (Statsmodels for ARIMA, TensorFlow/Keras for LSTM).
 Frontend: Streamlit or Dash for dashboard.
 Deployment: Web app (e.g., Heroku/AWS).
 
-Scalability:Modular design for adding more models (e.g., Prophet) in future.
+Scalability:
+Modular design for adding more models (e.g., Prophet) in future.
 
-Compatibility:Browsers: Chrome, Firefox, Edge (latest versions).
+Compatibility:
+Browsers: Chrome, Firefox, Edge (latest versions).
 Responsive design for desktop/tablet.
 
-6. Assumptions and DependenciesAssumptions:Historical data is clean and time-stamped; users handle external preprocessing if needed.
+6. Assumptions and Dependencies
+Assumptions:Historical data is clean and time-stamped; users handle external preprocessing if needed.
 Electricity prices exhibit patterns suitable for ARIMA/LSTM (e.g., seasonality, trends).
 No real-time predictions; focus on batch forecasting.
 
-Dependencies:Libraries: pandas, numpy, statsmodels, tensorflow, plotly.
+Dependencies:
+Libraries: pandas, numpy, statsmodels, tensorflow, plotly.
 Data Sources: User-provided or public datasets (e.g., from Kaggle).
 Hardware: GPU optional for LSTM training acceleration.
 
-7. Risks and MitigationsRisk: Model inaccuracy on volatile data.Mitigation: Provide backtesting and disclaimers; suggest hybrid approaches.
+7. Risks and Mitigations
+Risk: Model inaccuracy on volatile data.Mitigation: Provide backtesting and disclaimers; suggest hybrid approaches.
 
-Risk: User overwhelm with params.Mitigation: Defaults and tooltips; beginner mode with auto-config.
+Risk: User overwhelmed with params.
+Mitigation: Defaults and tooltips; beginner mode with auto-config.
 
 Risk: Data privacy concerns.Mitigation: Session-based processing; no persistent storage.
 
-8. AppendixGlossary:ARIMA: AutoRegressive Integrated Moving Average – statistical model for forecasting.
+8. Appendix
+Glossary:
+ARIMA: AutoRegressive Integrated Moving Average – statistical model for forecasting.
 LSTM: Long Short-Term Memory – neural network for sequence prediction.
 Backtesting: Evaluating model on historical data to simulate performance.
 
-Wireframes (Conceptual):[Describe: e.g., Sketch of dashboard with upload button, config panel, chart area.]
+Wireframes (Conceptual):
+[Describe: e.g., Sketch of dashboard with upload button, config panel, chart area.]
 
-Next Steps:Gather feedback from stakeholders.
+Next Steps:
+Gather feedback from stakeholders.
 Prototype development.
 Beta testing with sample data.
 
